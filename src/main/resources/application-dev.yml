@@ -1,0 +1,62 @@
+server:
+  port: 8090
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    reactor.core: TRACE
+
+
+spring:
+  neo4j:
+    authentication:
+      username: neo4j
+      password: 12345678
+    uri: bolt://localhost:7687
+  cassandra:
+    contact-points: 127.0.0.1:9042
+    local-datacenter: datacenter1
+  ai:
+    openai:
+      base-url: ${api.uri}
+      api-key: ${api.sk}
+      chat:
+        options:
+          model: deepseek-chat
+          max-completion-tokens: 1024000000
+          max-tokens: 1024000000
+      image:
+        options:
+          model: dall-e-3
+          response-format: url
+          size: 1024*1024
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: my-deepseek-R1-14b
+      embedding:
+        model: lrs33/bce-embedding-base_v1:latest
+        options:
+          model: lrs33/bce-embedding-base_v1:latest
+          num-batch: 512
+          num-ctx: 512
+    vectorstore:
+      milvus:
+        client:
+          host: localhost
+          port: 19530
+          username: root
+          password: Milvus
+        databaseName: nana
+        collectionName: vector_store
+        embeddingDimension: 1024
+        indexType: IVF_FLAT
+        metricType: COSINE
+        initialize-schema: true
+        auto-id: true
+        id-field-name: doc_id
+    chat:
+      memory:
+        cassandra:
+          table: chat_history
+          keyspace: another_domain_ai
