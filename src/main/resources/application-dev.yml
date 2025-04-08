@@ -23,17 +23,10 @@ spring:
       chat:
         options:
           model: deepseek-chat
-          max-completion-tokens: 1024000000
-          max-tokens: 1024000000
-      image:
-        options:
-          model: dall-e-3
-          response-format: url
-          size: 1024*1024
     ollama:
       base-url: http://localhost:11434
       chat:
-        model: my-deepseek-R1-14b
+        model: gemma3:12b
       embedding:
         model: lrs33/bce-embedding-base_v1:latest
         options:
