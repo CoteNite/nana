@@ -23,14 +23,14 @@ class ChatController(
 
     //根据设定，nana应该只有一个SessionId去进行操作
     @PostMapping("/generate")
-    fun generate(@RequestParam message:String, @RequestParam(required = false) imageUrl: String?):Response{
-        val content = chatQuery.generate(null,message,imageUrl)
+    fun generate(@RequestParam message:String):Response{
+        val content = chatQuery.generate(null,message)
         return Response.success(content)
     }
 
     @PostMapping("/testGenerate")
-    fun testGenerate(@RequestParam message:String,sessionId:String?, @RequestParam(required = false) imageUrl: String?):Response{
-        val content = chatQuery.generate(sessionId,message,imageUrl)
+    fun testGenerate(@RequestParam message:String,sessionId:String?):Response{
+        val content = chatQuery.generate(sessionId,message)
         return Response.success(content)
     }
 

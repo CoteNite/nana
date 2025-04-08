@@ -36,13 +36,6 @@ class CommonTools(
         return LocalDateTime.now().atZone(LocaleContextHolder.getTimeZone().toZoneId()).toString()
     }
 
-
-    @Tool(description = "记录当前时间到记忆中，以便后续使用")
-    fun getNowTime(): String {
-        return LocalDateTime.now().atZone(LocaleContextHolder.getTimeZone().toZoneId()).toString()
-    }
-
-
     @Tool(description = "解析url形式的图片")
     fun parseImage(@ToolParam(description = "输入图片的url") imageUrl: String): String {
         val localPicturePath = PictureUtils.saveImageCache(imageUrl)

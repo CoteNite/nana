@@ -21,7 +21,7 @@ import java.net.URL
  */
 interface ChatQuery{
 
-    fun generate(sessionId:String?,message:String,imageUrl: String?): String
+    fun generate(sessionId:String?,message:String): String
 
 }
 
@@ -32,7 +32,7 @@ class ChatQueryImpl(
     private val commonTools: CommonTools
 ): ChatQuery {
 
-    override fun generate(sessionId:String?,message:String,imageUrl: String?):String{
+    override fun generate(sessionId:String?,message:String):String{
         val content:String =this.chat(sessionId?:"45", message)
         return content
     }
