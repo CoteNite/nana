@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger
 @Slf4j
 class CrawlUtil(
     private val targetUrls: List<String>,
-    private val threadCount: Int = 8,
+    private val threadCount: Int = 32,
 ) : PageProcessor{
 
     companion object{

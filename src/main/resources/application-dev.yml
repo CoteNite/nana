@@ -34,7 +34,7 @@ spring:
           port: 19530
           username: root
           password: Milvus
-        databaseName: nana
+        databaseName: default
         collectionName: vector_store
         embeddingDimension: 1024
         indexType: IVF_FLAT

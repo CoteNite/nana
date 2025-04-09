@@ -5,8 +5,7 @@ import cn.example.nana.client.api.dto.SearchResult
 import cn.example.nana.client.api.dto.SearxngResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import retrofit2.Call
@@ -103,92 +102,51 @@ class WebSearchClient(
         return results.take(count) // 最终确保返回的结果数量不超过count
     }
 
-    /**
-     * 执行搜索并通过回调返回结果列表（异步方式）
-     *
-     * @param query 查询内容
-     * @param count 需要的结果数量
-     * @param callback 结果回调函数
-     */
-    fun searchAsync(query: String, count: Int, callback: (List<SearchResult>?, Throwable?) -> Unit) {
+    suspend fun searchAsync(query: String, count: Int) : List<SearchResult>{
         if (query.isBlank()) {
-            callback(null, IllegalArgumentException("查询内容不能为空"))
-            return
+            throw IllegalArgumentException("查询内容不能为空")
         }
 
         if (count <= 0) {
-            callback(null, IllegalArgumentException("查询数量必须大于0"))
-            return
+            throw IllegalArgumentException("查询数量必须大于0")
         }
 
         val allResults = mutableListOf<SearchResult>()
-        var currentPage = 1
-        var fetchedCount = 0
+        val numPagesToFetch = (count + EXPECTED_RESULTS_PER_PAGE - 1) / EXPECTED_RESULTS_PER_PAGE
+        val actualNumPages = minOf(numPagesToFetch, MAX_PAGES)
+        val deferreds = mutableListOf<Deferred<List<SearchResult>>>()
 
-        fun fetchPage(page: Int) {
-            if (fetchedCount >= count || page > MAX_PAGES) {
-                callback(allResults.take(count), null)
-                return
-            }
-
-            val call = searxngApi.search(query, pageNumber = page)
-            call.enqueue(object : Callback<SearxngResponse> {
-                override fun onResponse(call: Call<SearxngResponse>, response: Response<SearxngResponse>) {
-                    if (response.isSuccessful) {
-                        val searxngResponse = response.body()
-                        if (searxngResponse != null) {
-                            val currentResults = searxngResponse.results.map { result ->
+        coroutineScope {
+            for (page in 1..actualNumPages) {
+                val deferred = async {
+                    try {
+                        val response = searxngApi.search(query, pageNumber = page).execute()
+                        if (response.isSuccessful) {
+                            val searxngResponse = response.body()
+                            searxngResponse?.results?.map { result ->
                                 SearchResult(
                                     url = result.url,
                                     title = result.title,
                                     content = result.content ?: ""
                                 )
-                            }
-                            allResults.addAll(currentResults)
-                            fetchedCount = allResults.size
-
-                            if (currentResults.size < EXPECTED_RESULTS_PER_PAGE) {
-                                callback(allResults.take(count), null)
-                                return
-                            }
-
-                            fetchPage(page + 1)
+                            } ?: emptyList()
                         } else {
-                            callback(null, IOException("响应体为空 (页码: $page)"))
+                            throw IOException("API请求失败 (页码: $page): ${response.code()} ${response.message()}")
                         }
-                    } else {
-                        callback(null, IOException("API请求失败 (页码: $page): ${response.code()} ${response.message()}"))
+                    } catch (e: Exception) {
+                        println("搜索失败 (页码: $page): ${e.message}") // 打印错误信息，可以选择更合适的错误处理方式
+                        emptyList() // 返回空列表，不中断整个爬取过程
                     }
                 }
+                deferreds.add(deferred)
+            }
 
-                override fun onFailure(call: Call<SearxngResponse>, t: Throwable) {
-                    callback(null, IOException("搜索失败 (页码: $page): ${t.message}", t))
-                }
-            })
-        }
-
-        fetchPage(1)
-    }
-
-    /**
-     * 执行搜索并返回CompletableFuture（Java兼容的异步方式）
-     *
-     * @param query 查询内容
-     * @param count 需要的结果数量
-     * @return 包含搜索结果的CompletableFuture
-     */
-    fun searchAsyncWithFuture(query: String, count: Int): CompletableFuture<List<SearchResult>> {
-        val future = CompletableFuture<List<SearchResult>>()
-
-        searchAsync(query, count) { results, error ->
-            if (error != null) {
-                future.completeExceptionally(error)
-            } else {
-                future.complete(results)
+            deferreds.awaitAll().forEach { results ->
+                allResults.addAll(results)
             }
         }
 
-        return future
+        return allResults.take(count)
     }
 
 }

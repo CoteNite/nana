@@ -178,4 +178,12 @@ object TextConstants {
     }
 
 
+
+    fun buildRagContextPromptForSingleSummary(): String {
+        return """请总结以下多个网页的内容，重点回答用户的问题。
+            帮我把长度限制在48582tokens
+            {{documents}}
+            """.trimIndent()
+    }
+
 }

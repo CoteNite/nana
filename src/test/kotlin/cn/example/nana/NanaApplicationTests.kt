@@ -2,8 +2,6 @@ package cn.example.nana
 
 import cn.example.nana.client.WebSearchClient
 import cn.example.nana.commons.utils.CrawlUtil
-import dev.langchain4j.community.web.search.searxng.SearXNGWebSearchEngine
-import dev.langchain4j.web.search.WebSearchRequest
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import us.codecraft.webmagic.Page

@@ -3,10 +3,9 @@ package cn.example.nana.models.dto
 /**
  * @Author  RichardYoung
  * @Description
- * @Date  2025/4/9 02:18
+ * @Date  2025/4/9 22:46
  */
-data class WebPreviewDTO(
-    val url: String,
+data class WebSearchResult(
     val title: String,
-    val content: String
+    val summary: String
 )
