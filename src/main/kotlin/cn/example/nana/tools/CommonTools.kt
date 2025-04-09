@@ -9,6 +9,7 @@ import cn.example.nana.commons.exception.BusinessException
 import cn.example.nana.commons.utils.PictureUtils
 import cn.example.nana.component.RagIngestion
 import cn.example.nana.repo.MilvusRepository
+import cn.example.nana.service.RagService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.SystemPromptTemplate
@@ -37,7 +38,7 @@ class CommonTools(
     private val webSearchClient: WebSearchClient,
     private val ragIngestion: RagIngestion,
     private val openAiChatModel: OpenAiChatModel,
-    private val milvusRepository: MilvusRepository
+    private val ragService: RagService
 ){
 
 
@@ -92,7 +93,7 @@ class CommonTools(
             .content() ?: ""
 
         EXECUTOR.submit{
-            milvusRepository.storeWebSearchResultInMilvus(summary)
+            ragService.storeWebSearchResultInMilvus(summary)
         }
 
         return summary

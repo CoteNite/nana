@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service
  */
 
 interface ChatQuery {
-//    fun chat(sessionId: String,message: String,prompt: String):String
+
+
 }
 
 @Service
@@ -26,20 +27,7 @@ class ChatQueryImpl(
     private val chatMemory: CassandraChatMemory,
     private val commonTools: CommonTools
 ): ChatQuery {
-//
-//
-//
-//    override fun chatWithPrompt(sessionId: String,message: String,prompt:String):String{
-//        val advisor = MessageChatMemoryAdvisor(chatMemory, sessionId, 10000)
-//        val content = ChatClient.create(chatModel)
-//            .prompt(prompt)
-//            .tools(commonTools)
-//            .advisors(advisor)
-//            .user(message)
-//            .call()
-//            .content()?:throw BusinessException(Errors.CHAT_ERROR)
-//        return content
-//    }
+
 
 
 }

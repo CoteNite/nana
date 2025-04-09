@@ -24,6 +24,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
     implementation("us.codecraft:webmagic-core:1.0.3")
     implementation("us.codecraft:webmagic-extension:1.0.3")
 
@@ -32,6 +34,8 @@ dependencies {
 
     //    implementation("org.springframework.ai:spring-ai-mcp-server-spring-boot-starter:1.0.0-M6")
 //    implementation("org.springframework.ai:spring-ai-mcp-client-webflux-spring-boot-starter:1.0.0-M6")
+
+    implementation("com.hankcs:hanlp:portable-1.8.6")
 
     implementation("org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M6")
     implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0-M6")

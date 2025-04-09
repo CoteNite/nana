@@ -182,8 +182,18 @@ object TextConstants {
     fun buildRagContextPromptForSingleSummary(): String {
         return """请总结以下多个网页的内容，重点回答用户的问题。
             帮我把长度限制在48582tokens
-            {{documents}}
+            {documents}
             """.trimIndent()
     }
+
+
+    fun buildKnowledgeGraphPrompt(summary:String):String{
+        return """
+            请对下面的内容提取三个关键字，并以长度为3的json数组的形式输出，数组中object的形式为”{keyWords（关键字），content（部分文本内容）,to(列表，内含其指向的关键字(String形式)，但长度不超过3)}
+            输出纯json文本，不要markdown，不要转义字符，因为我后续要拿去使用jackson转换为实体
+            ${summary}
+        """.trimIndent()
+    }
+
 
 }
