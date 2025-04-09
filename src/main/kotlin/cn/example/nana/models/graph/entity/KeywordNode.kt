@@ -1,5 +1,6 @@
 package cn.example.nana.models.graph.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Relationship
@@ -16,12 +17,12 @@ data class KeywordNode(
 
     val importance: Double = 1.0,
 
-    // 关系: Keyword --[DESCRIBES]-> Content
-    // 从 Keyword 指向 Content
-    // 使用 Set 防止重复关系
+    @JsonIgnoreProperties("describes")
     @Relationship(type = "DESCRIBES", direction = Relationship.Direction.OUTGOING)
     var describes: MutableSet<ContentNode> = mutableSetOf()
 ) {
+
+
     // 重写 equals 和 hashCode 基于 ID (keyword)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

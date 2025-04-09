@@ -1,5 +1,6 @@
 package cn.example.nana.models.graph.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.springframework.data.neo4j.core.schema.GeneratedValue
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -22,6 +23,7 @@ data class ContentNode(
     // 关系: Content --[REFERENCES]-> Keyword
     // 从 Content 指向 `to` 列表中的 Keyword
     // 使用 Set 防止重复关系
+    @JsonIgnoreProperties("references")
     @Relationship(type = "REFERENCES", direction = Relationship.Direction.OUTGOING)
     var references: MutableSet<KeywordNode> = mutableSetOf()
 )

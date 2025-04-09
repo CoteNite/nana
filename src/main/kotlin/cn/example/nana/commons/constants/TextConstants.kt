@@ -199,7 +199,8 @@ object TextConstants {
     fun buildKeyWorld4GraphPrompt(summary:String):String{
         return """
             请对下面的内容提取三个关键字，并以Json字符串数组的形式输出
-            输出纯json文本，不要markdown，不要转义字符，因为我后续要拿去使用jackson转换为实体
+            请输出能直接被Java的jackson转换为实体的格式
+            输出纯json文本，不要markdown，不要转义字符
             ${summary}
         """.trimIndent()
     }

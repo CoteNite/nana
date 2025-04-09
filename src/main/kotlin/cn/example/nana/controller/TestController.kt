@@ -2,6 +2,8 @@ package cn.example.nana.controller
 
 import cn.example.nana.command.KnowledgeGraphCommand
 import cn.example.nana.commons.utils.CrawlUtil
+import cn.example.nana.service.RagService
+import cn.example.nana.tools.CommonTools
 import org.springframework.ai.vectorstore.milvus.MilvusVectorStore
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,12 +18,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("test")
 class TestController(
-    private val knowledgeGraphCommand: KnowledgeGraphCommand
+    private val commonTools: CommonTools
 ){
 
     @PostMapping("test")
     fun test(@RequestParam summary:String) {
-        knowledgeGraphCommand.processSummary(summary)
+        val information = commonTools.searchWithKnowledgeGraph(summary)
+        println(information)
     }
 
 }

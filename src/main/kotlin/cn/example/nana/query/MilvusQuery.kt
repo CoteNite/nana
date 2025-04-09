@@ -36,7 +36,7 @@ class MilvusQueryImpl(
 
     override fun search(query: String, collectionName: String, topK: Int,vectorDimension:Int): List<MilvusSearchResult> {
         try {
-            val queryVector = embeddingModel.embed(query)
+            val queryVector = embeddingModel.embed(query).toList()
 
             val outputFields = listOf(primaryKeyFieldName, outputSummaryFieldName)
 
