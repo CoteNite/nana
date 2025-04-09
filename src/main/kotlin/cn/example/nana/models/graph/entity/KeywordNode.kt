@@ -14,6 +14,8 @@ data class KeywordNode(
     // 使用 keyword 字符串本身作为 ID，需要保证其唯一性
     @Id val keyword: String,
 
+    val importance: Double = 1.0,
+
     // 关系: Keyword --[DESCRIBES]-> Content
     // 从 Keyword 指向 Content
     // 使用 Set 防止重复关系

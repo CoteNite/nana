@@ -10,4 +10,9 @@ import org.springframework.stereotype.Repository
  * @Date  2025/4/10 02:11
  */
 @Repository
-interface KeywordRepository : Neo4jRepository<KeywordNode, String>
+interface KeywordRepository : Neo4jRepository<KeywordNode, String> {
+
+
+
+
+}

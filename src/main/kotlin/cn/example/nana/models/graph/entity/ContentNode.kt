@@ -24,10 +24,4 @@ data class ContentNode(
     // 使用 Set 防止重复关系
     @Relationship(type = "REFERENCES", direction = Relationship.Direction.OUTGOING)
     var references: MutableSet<KeywordNode> = mutableSetOf()
-) {
-    // 注意：默认的 data class equals/hashCode 基于所有主构造函数属性。
-    // 如果需要基于 ID 判断唯一性，可以覆盖 equals/hashCode，
-    // 但对于自动生成的 ID，默认行为通常是合适的。
-    // 如果 text 需要唯一，应考虑将 text 作为 ID 或添加唯一约束。
-    // 按当前需求，每个 JSON 条目的 content 似乎是独立的节点，用 UUID 合适。
-}
+)

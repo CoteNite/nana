@@ -8,7 +8,8 @@ import cn.example.nana.commons.enums.Errors
 import cn.example.nana.commons.exception.BusinessException
 import cn.example.nana.commons.utils.PictureUtils
 import cn.example.nana.component.RagIngestion
-import cn.example.nana.repo.MilvusRepository
+import cn.example.nana.query.MilvusQuery
+import cn.example.nana.query.Neo4jQuery
 import cn.example.nana.service.RagService
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.Prompt
@@ -38,9 +39,10 @@ class CommonTools(
     private val webSearchClient: WebSearchClient,
     private val ragIngestion: RagIngestion,
     private val openAiChatModel: OpenAiChatModel,
-    private val ragService: RagService
+    private val ragService: RagService,
+    private val milvusQuery: MilvusQuery,
+    private val neo4jQuery: Neo4jQuery
 ){
-
 
     companion object{
         private val EXECUTOR = Executors.newFixedThreadPool(32)
@@ -97,6 +99,51 @@ class CommonTools(
         }
 
         return summary
+    }
+
+    @Tool(description = """
+        该工具有较高的使用优先级，且平常对话可能也会经常使用。
+        当用户问题涉及到特定领域知识、历史对话信息或需要精确答案时，应优先使用此工具。
+        通过本地知识库查询相关信息，获取权威、准确的答案。查询应包含用户问题的关键概念和要点。
+    """)
+    fun searchWithKnowledgeGraph(@ToolParam(description = "用户的完整问题或包含关键概念的查询语句") query: String): String {
+
+        val milvusResults = milvusQuery.search(query, "web_search_results", topK = 5)
+
+        if (milvusResults.isEmpty()) {
+            return "没有找到相关信息。"
+        }
+
+        val enrichedResults = mutableListOf<String>()
+
+        for (result in milvusResults) {
+            val summary = result.summary // 从 Milvus 结果中获取 summary
+
+            // 2. 基于 summary 在 Neo4j 知识图谱中查找相关联的内容
+            val relatedContent = neo4jQuery.findRelatedContentBySummaryUsingKeywords(summary, depth = 2) // 可以调整图的搜索深度
+
+            val contextBuilder = StringBuilder()
+            contextBuilder.append("找到以下相关信息：\n")
+            contextBuilder.append("原始摘要：${summary}\n")
+
+            if (relatedContent.isNotEmpty()) {
+                contextBuilder.append("知识图谱关联内容：\n")
+                relatedContent.forEach { contentNode ->
+                    contextBuilder.append("- ${contentNode.contentNode.text}\n")
+
+                    contentNode.matchedKeywords.forEach { keyword ->
+                        contextBuilder.append("  - 关键词：${keyword}\n")
+                    }
+                }
+            } else {
+                contextBuilder.append("知识图谱中没有找到与该摘要直接关联的内容。\n")
+            }
+
+            enrichedResults.add(contextBuilder.toString())
+        }
+
+        // 3. 将增强后的信息拼接成一个字符串返回
+        return enrichedResults.joinToString("\n\n")
     }
 
 
