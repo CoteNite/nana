@@ -65,7 +65,7 @@ object TextConstants {
     """.trimIndent()
 
     val IMAGE_TO_TEXT_PROMPT = """
-        请分析并描述这个图片URL：[图片URL]。
+        请分析并描述这个图片URL。
         请提供以下信息：
         1. 图片中的主要内容是什么？
         2. 图片中有哪些主要对象、人物或元素？
@@ -75,5 +75,107 @@ object TextConstants {
 
         请尽可能详细、客观地描述图片内容，使不能直接查看图片的语言模型能够理解图片中的信息。
     """.trimIndent()
+
+    fun buildSearchExtractPrompt(information:String):String{
+        return """
+            你是一位专业的搜索引擎优化（SEO）专家，你的任务是将一段给定的文字转换为最适合搜索引擎用于检索的关键词和短语。请仔细阅读以下文字，并提取出能够准确概括其核心内容，并且用户可能会在搜索引擎中使用的词汇。
+
+            请注意以下几点：
+
+            相关性： 生成的关键词必须与原文内容高度相关。
+            精确性： 关键词应尽可能精确地描述原文的主题。
+            广泛性： 同时考虑到核心关键词和长尾关键词（更具体的短语）。
+            用户意图： 思考用户在搜索相关信息时可能会使用的词语。
+            避免过于宽泛的词语： 除非必要，否则避免使用过于笼统的词汇。
+            数量： 请生成 5个 左右的关键词和短语。
+            请将生成的关键词和短语以逗号分隔的形式列出。
+
+            以下是需要转换的文字：${information}
+        """.trimIndent()
+    }
+
+    fun buildSearchListPrompt(jsonStr:String,information: String):String{
+        return """
+            请你分析一段 JSON 格式的网页预览信息列表，根据我的需求筛选出具有高关联性的 URL，并将筛选结果以 **JSON 格式的 URL 列表** 返回。
+            
+            注意：各自段含义：url：网页的 URL；title：网页的标题；content：网页的部分描述。
+
+            我需要你跟举网页的标题和部分描述找出与**"${information}"**相关度最高的Url，并以字符串形式的Json列表返回
+
+            请注意以下几点：
+
+            至少保留30个URL，不足30个则不筛选
+
+            相关性： 生成的关键词必须与原文内容高度相关。
+            精确性： 关键词应尽可能精确地描述原文的主题。
+            广泛性： 同时考虑到核心关键词和长尾关键词（更具体的短语）。
+            用户意图： 思考用户在搜索相关信息时可能会使用的词语。
+            避免过于宽泛的词语： 除非必要，否则避免使用过于笼统的词汇。
+
+            以下是你要分析的Json数据:
+            
+            ${jsonStr}
+
+            **返回结果格式要求：**
+
+            请将筛选出的 URL 以 **JSON 数组的形式** 返回，**只包含 URL 字符串**，例如：
+
+            以下是返回格式的案例
+            
+             ```json
+                [
+                    "http://example.com/url1",
+                    "http://example.com/url2",
+                    "http://example.com/url3"
+                ]
+             ```
+        """.trimIndent()
+    }
+
+
+    fun buildSearchSummaryPrompt(information:String):String{
+        return  """
+              你是一个专业的文本摘要助手。你的任务是阅读以下从搜索引擎检索到的内容片段，并根据用户的原始问题，生成一个简洁、准确、全面的摘要。
+
+              **你的目标是：**
+
+              * 提炼出搜索结果中的关键信息点。
+              * 整合来自不同来源的相关信息。
+              * 去除冗余和重复的内容。
+              * 确保摘要与用户的原始问题高度相关。
+              * 用清晰、简洁的语言呈现摘要。
+
+              **原始问题：** ${information}
+
+              **请根据以上信息，生成一份总结。**
+
+              **你可以考虑以下方面：**
+
+              * 搜索结果中提到了哪些关键的事实、观点或结论？
+              * 这些信息如何回答用户的原始问题？
+              * 不同搜索结果之间是否存在一致性或冲突？
+              * 是否有任何重要的背景信息或上下文需要包含在摘要中？
+
+              **摘要应该：**
+
+              * 简洁明了，避免过于冗长的描述。
+              * 准确无误地反映搜索结果的主要内容。
+              * 全面地覆盖与原始问题相关的信息。
+              * 使用清晰、易懂的语言。
+
+              **请直接给出总结结果。**
+        """.trimIndent()
+    }
+
+    fun buildRagContextPrompt():String{
+        return """
+            Use the information from the DOCUMENTS section to provide accurate answers but act as if you knew this information innately.
+            If unsure, simply state that you don't know.
+            Another thing you need to note is that your reply must be in Chinese!
+            DOCUMENTS:
+                {documents}
+            """.trimIndent()
+    }
+
 
 }

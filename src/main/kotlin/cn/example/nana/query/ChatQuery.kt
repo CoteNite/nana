@@ -7,22 +7,17 @@ import cn.example.nana.tools.CommonTools
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.memory.cassandra.CassandraChatMemory
-import org.springframework.ai.chat.messages.UserMessage
-import org.springframework.ai.model.Media
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.stereotype.Service
-import org.springframework.util.MimeTypeUtils
-import java.net.URL
 
 /**
  * @Author  RichardYoung
  * @Description
- * @Date  2025/4/3 01:37
+ * @Date  2025/4/9 02:20
  */
-interface ChatQuery{
 
-    fun generate(sessionId:String?,message:String): String
-
+interface ChatQuery {
+//    fun chat(sessionId: String,message: String,prompt: String):String
 }
 
 @Service
@@ -31,24 +26,21 @@ class ChatQueryImpl(
     private val chatMemory: CassandraChatMemory,
     private val commonTools: CommonTools
 ): ChatQuery {
-
-    override fun generate(sessionId:String?,message:String):String{
-        val content:String =this.chat(sessionId?:"45", message)
-        return content
-    }
-
-
-    private fun chat(sessionId: String,message: String):String{
-        val advisor = MessageChatMemoryAdvisor(chatMemory, sessionId, 10000)
-        val content = ChatClient.create(chatModel)
-            .prompt(TextConstants.NANA_INFORMATION)
-            .tools(commonTools)
-            .advisors(advisor)
-            .user(message)
-            .call()
-            .content()?:throw BusinessException(Errors.CHAT_ERROR)
-        return content
-    }
+//
+//
+//
+//    override fun chatWithPrompt(sessionId: String,message: String,prompt:String):String{
+//        val advisor = MessageChatMemoryAdvisor(chatMemory, sessionId, 10000)
+//        val content = ChatClient.create(chatModel)
+//            .prompt(prompt)
+//            .tools(commonTools)
+//            .advisors(advisor)
+//            .user(message)
+//            .call()
+//            .content()?:throw BusinessException(Errors.CHAT_ERROR)
+//        return content
+//    }
 
 
 }
+

@@ -22,24 +22,32 @@ repositories {
 dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+    implementation("us.codecraft:webmagic-core:1.0.3")
+    implementation("us.codecraft:webmagic-extension:1.0.3")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+
+    //    implementation("org.springframework.ai:spring-ai-mcp-server-spring-boot-starter:1.0.0-M6")
+//    implementation("org.springframework.ai:spring-ai-mcp-client-webflux-spring-boot-starter:1.0.0-M6")
 
     implementation("org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M6")
     implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0-M6")
     implementation("org.springframework.ai:spring-ai-tika-document-reader:1.0.0-M6")
 
     implementation("org.springframework.ai:spring-ai-milvus-store-spring-boot-starter:1.0.0-M6")
-//    implementation("org.springframework.ai:spring-ai-mcp-server-spring-boot-starter:1.0.0-M6")
-//    implementation("org.springframework.ai:spring-ai-mcp-client-webflux-spring-boot-starter:1.0.0-M6")
     implementation("org.springframework.ai:spring-ai-cassandra-store-spring-boot-starter:1.0.0-M6")
 
-    implementation("com.github.javaparser:javaparser-symbol-solver-core:3.26.3")
+    //retrofit2
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+
     implementation("org.redisson:redisson-spring-boot-starter:3.44.0")
-    implementation("org.eclipse.jgit:org.eclipse.jgit:5.13.0.202109080827-r")
     implementation("cn.hutool:hutool-all:5.8.21")
-    implementation("cn.idev.excel:fastexcel:1.0.0")
+
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

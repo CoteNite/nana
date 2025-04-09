@@ -1,12 +1,6 @@
 server:
   port: 8090
 
-logging:
-  level:
-    org.springframework.ai: DEBUG
-    reactor.core: TRACE
-
-
 spring:
   neo4j:
     authentication:
@@ -53,3 +47,12 @@ spring:
         cassandra:
           table: chat_history
           keyspace: another_domain_ai
+
+searxng:
+  base-url: http://localhost:8041
+
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    reactor.core: TRACE

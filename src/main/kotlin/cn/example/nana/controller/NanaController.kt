@@ -1,9 +1,8 @@
 package cn.example.nana.controller
 
 import cn.example.nana.commons.response.Response
-import cn.example.nana.query.ChatQuery
+import cn.example.nana.service.NanaService
 import org.springframework.ai.ollama.OllamaChatModel
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -16,21 +15,20 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 @RequestMapping("chat")
-class ChatController(
-    private val chatQuery: ChatQuery,
-    private val ollamaChatModel: OllamaChatModel
+class NanaController(
+    private val nanaService: NanaService
 ){
 
     //根据设定，nana应该只有一个SessionId去进行操作
     @PostMapping("/generate")
     fun generate(@RequestParam message:String):Response{
-        val content = chatQuery.generate(null,message)
+        val content = nanaService.generate(null,message)
         return Response.success(content)
     }
 
     @PostMapping("/testGenerate")
     fun testGenerate(@RequestParam message:String,sessionId:String?):Response{
-        val content = chatQuery.generate(sessionId,message)
+        val content = nanaService.generate(sessionId,message)
         return Response.success(content)
     }
 
