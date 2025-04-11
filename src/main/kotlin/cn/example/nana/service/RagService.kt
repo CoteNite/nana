@@ -1,7 +1,7 @@
 package cn.example.nana.service
 
 import cn.example.nana.command.KnowledgeGraphCommand
-import cn.example.nana.repo.MilvusRepository
+import cn.example.nana.repo.milvus.StoreWebSearchRepo
 import org.springframework.stereotype.Service
 
 /**
@@ -16,13 +16,13 @@ interface RagService {
 
 @Service
 class RagServiceImpl(
-    private val milvusRepository: MilvusRepository,
+    private val storeWebSearchRepo: StoreWebSearchRepo,
     private val knowledgeGraphCommand: KnowledgeGraphCommand
 ): RagService{
 
     override fun storeWebSearchResultInMilvus(summary: String) {
         knowledgeGraphCommand.processSummary(summary)
-        milvusRepository.storeWebSearchResultInMilvus(summary)
+        storeWebSearchRepo.storeWebSearchResultInMilvus(summary)
     }
 
 }

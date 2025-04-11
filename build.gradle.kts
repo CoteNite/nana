@@ -29,6 +29,8 @@ dependencies {
     implementation("us.codecraft:webmagic-core:1.0.3")
     implementation("us.codecraft:webmagic-extension:1.0.3")
 
+
+    implementation("org.springframework.boot:spring-boot-starter-data-cassandra")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
 
@@ -56,6 +58,7 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.testcontainers:cassandra")
     testImplementation("org.testcontainers:cassandra")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

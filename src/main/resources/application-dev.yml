@@ -8,7 +8,9 @@ spring:
       password: 12345678
     uri: bolt://localhost:7687
   cassandra:
-    contact-points: 127.0.0.1:9042
+    contact-points: localhost
+    port: 9042
+    keyspace-name: another_domain_ai
     local-datacenter: datacenter1
   ai:
     openai:

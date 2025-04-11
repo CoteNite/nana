@@ -205,4 +205,12 @@ object TextConstants {
         """.trimIndent()
     }
 
+    fun buildSummaryPrompt(information:String):String{
+        return """
+            注意，如果文中提到“小七”或者“nana”，是用户对Ai的昵称
+            请总结以下对话内容，提取关键信息，并保留时间信息和重要的对话片段：
+            ${information}
+        """.trimIndent()
+    }
+
 }
