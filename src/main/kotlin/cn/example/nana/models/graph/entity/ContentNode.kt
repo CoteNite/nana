@@ -1,6 +1,10 @@
 package cn.example.nana.models.graph.entity
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import org.springframework.context.annotation.Lazy
 import org.springframework.data.neo4j.core.schema.GeneratedValue
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -12,18 +16,26 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator
  * @Description
  * @Date  2025/4/10 03:32
  */
-@Node("Content") // 节点标签为 Content
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "keyword")
+@Node("Content")
 data class ContentNode(
-    // 使用自动生成的 UUID 作为 ID，因为 content 文本可能较长或不唯一
-    @Id @GeneratedValue(UUIDStringGenerator::class)
+    @field:Id @field:GeneratedValue(UUIDStringGenerator::class)
     var id: String? = null,
+    val text: String,
+    val sourceType: String? = null,
+    val memoryAge: String? = null,
+    val createdTime: Long? = null,
 
-    val text: String, // 存储 content 的内容
 
-    // 关系: Content --[REFERENCES]-> Keyword
-    // 从 Content 指向 `to` 列表中的 Keyword
-    // 使用 Set 防止重复关系
-    @JsonIgnoreProperties("references")
-    @Relationship(type = "REFERENCES", direction = Relationship.Direction.OUTGOING)
-    var references: MutableSet<KeywordNode> = mutableSetOf()
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as ContentNode
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}

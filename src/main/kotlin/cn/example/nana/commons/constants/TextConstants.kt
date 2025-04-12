@@ -66,7 +66,7 @@ object TextConstants {
 
     const val MID_MEMORY_PROMPT="""
         你被赋予了过去对话的总结，用于回忆之前的讨论。请记住以下几点：
-        * 这些总结是对过去一天会话的概要，可能不包含所有具体的细节。 
+        * 这些总结是对过去会话的概要，可能来自不同的时间段，并不包含所有具体的细节。
         * 不要基于总结内容进行猜测或推断其中没有明确提及的信息。
         * 如果你需要了解更多细节才能继续当前对话，你可以装作人类遗忘的样子向用户发问
     """
@@ -194,11 +194,22 @@ object TextConstants {
     }
 
 
-    fun buildKnowledgeGraphPrompt(summary:String):String{
+    fun buildKeywordRefinementPrompt(initialKeywords: String, historicalKeywords: String): String {
         return """
-            请对下面的内容提取三个关键字，并以长度为3的json数组的形式输出，数组中object的形式为”{keyWords（关键字），content（部分文本内容）,to(列表，内含其指向的关键字(String形式)，但长度不超过3)}
-            输出纯json文本，不要markdown，不要转义字符，因为我后续要拿去使用jackson转换为实体
-            ${summary}
+            你是一个智能的关键词优化助手。你的任务是根据用户提供的初始关键词以及该用户历史对话中相关的关键词，生成一个更精准和全面的关键词列表，用于在知识图谱中搜索信息。
+
+            初始关键词：${initialKeywords}
+
+            历史相关的关键词：${historicalKeywords}
+
+            请从以下文本中提取出最多 5 个最重要的关键词或短语，以 JSON 数组的形式返回。例如：["关键词1", "关键词2", ...]
+
+            这些关键词应该能够更准确地表达用户的意图，并覆盖知识图谱中可能相关的概念。如果历史关键词与初始关键词没有明显关联，请主要基于初始关键词进行优化。
+
+            请输出能直接被Java的jackson转换为实体的格式
+
+            输出纯json文本，不要markdown，不要转义字符
+
         """.trimIndent()
     }
 
@@ -219,6 +230,36 @@ object TextConstants {
             ${information}
         """.trimIndent()
     }
+
+    fun buildKeywordExtractionPrompt(text: String): String {
+        return """
+            请从以下文本中提取出最多 5 个最重要的关键词或短语，以 JSON 数组的形式返回。例如：["关键词1", "关键词2", ...]
+            请输出能直接被Java的jackson转换为实体的格式
+            输出纯json文本，不要markdown，不要转义字符
+            文本：
+            ${text}
+        """.trimIndent()
+    }
+
+    fun buildKnowledgeGraphPrompt(summary: String, historicalKeywords: Set<String>): String {
+        val historicalKeywordsText = historicalKeywords.joinToString(", ")
+        return """
+        请分析以下文本，抽取出关键的主题、概念以及它们之间的关系，构建一个知识图谱。
+        在提取知识图谱中的关键词时，请优先考虑以下已有的历史关键词，如果文本中的概念与这些历史关键词相关，请直接使用或稍作调整。
+        如果文本中包含与历史关键词不相关的新的关键概念，也请提取出来作为知识图谱的关键词。
+
+        请以 JSON 数组的形式返回结果，每个元素包含 "keyWords" (关键词，可以是一个或多个，用逗号分隔), "content" (对关键词的简要描述或解释), 和 "to" (一个包含相关关键词的列表)。
+
+        历史关键词：$historicalKeywordsText
+
+        文本：
+        $summary
+        """.trimIndent()
+    }
+
+
+
+
 
 
 

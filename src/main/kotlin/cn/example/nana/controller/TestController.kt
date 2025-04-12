@@ -1,6 +1,9 @@
 package cn.example.nana.controller
 
+import cn.example.nana.models.graph.entity.KeywordNode
 import cn.example.nana.task.MemoryReinforcementTask
+import org.springframework.data.neo4j.core.Neo4jTemplate
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -14,12 +17,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("test")
 class TestController(
-    private val memoryReinforcementTask: MemoryReinforcementTask
+    private val memoryReinforcementTask: MemoryReinforcementTask,
 ){
 
     @PostMapping("test")
-    fun test(@RequestParam summary:String) {
+    fun test() {
        memoryReinforcementTask.performDailyMemoryReinforcement()
     }
+
 
 }

@@ -48,7 +48,11 @@ class CommonTools(
         private val EXECUTOR = Executors.newFixedThreadPool(32)
     }
 
-    @Tool(description = "获取当前的时间")
+    @Tool(description = """
+        当用户提到时间相关的词汇(早上，中午，下午，晚上),
+        或者和时间获取当前的时间(晚安，早安)等,
+        使用该方法获取时间
+    """)
     fun getCurrentDateTime(): String {
         return LocalDateTime.now().atZone(LocaleContextHolder.getTimeZone().toZoneId()).toString()
     }
@@ -108,7 +112,7 @@ class CommonTools(
     """)
     fun searchWithKnowledgeGraph(@ToolParam(description = "用户的完整问题或包含关键概念的查询语句") query: String): String {
 
-        val milvusResults = milvusQuery.search(query, "web_search_results", topK = 5)
+        val milvusResults = milvusQuery.search(query, "web_search_results", topK = 30)
 
         if (milvusResults.isEmpty()) {
             return "没有找到相关信息。"
@@ -116,11 +120,14 @@ class CommonTools(
 
         val enrichedResults = mutableListOf<String>()
 
+        // 从用户查询中提取关键词（简单的按空格分割）
+        val keywordsFromQuery = query.split("\\s+").toList()
+
         for (result in milvusResults) {
             val summary = result.summary // 从 Milvus 结果中获取 summary
 
             // 2. 基于 summary 在 Neo4j 知识图谱中查找相关联的内容
-            val relatedContent = neo4jQuery.findRelatedContentBySummaryUsingKeywords(summary, depth = 5) // 可以调整图的搜索深度
+            val relatedContent = neo4jQuery.findRelatedContentBySummaryUsingKeywords(summary, keywords = keywordsFromQuery, depth = 5)
 
             val contextBuilder = StringBuilder()
             contextBuilder.append("找到以下相关信息：\n")

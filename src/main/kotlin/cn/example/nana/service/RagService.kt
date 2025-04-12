@@ -21,7 +21,7 @@ class RagServiceImpl(
 ): RagService{
 
     override fun storeWebSearchResultInMilvus(summary: String) {
-        knowledgeGraphCommand.processSummary(summary)
+        knowledgeGraphCommand.processWebSearchSummary(summary)
         storeWebSearchRepo.storeWebSearchResultInMilvus(summary)
     }
 

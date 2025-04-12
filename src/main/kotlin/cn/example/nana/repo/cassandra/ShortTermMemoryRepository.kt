@@ -4,6 +4,7 @@ import cn.example.nana.models.cassandra.ShortTermMemory
 import cn.example.nana.models.cassandra.ShortTermMemoryKey
 import org.springframework.data.cassandra.repository.CassandraRepository
 import org.springframework.data.cassandra.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -20,6 +21,11 @@ interface ShortTermMemoryRepository : CassandraRepository<ShortTermMemory, Short
         endTime: Instant
     ): List<ShortTermMemory>
 
-    @Query("SELECT DISTINCT primaryKey.sessionId FROM ShortTermMemory WHERE messageTimeStamp >= :startTime AND messageTimeStamp < :endTime")
-    fun findDistinctSessionIdsWithMessagesBetween(startTime: Instant, endTime: Instant): List<String>
+
+    // 使用 @Query 注解显式查询指定时间范围内的所有记录
+    @Query("SELECT * FROM chat_history WHERE message_timestamp >= :startTime AND message_timestamp < :endTime  ALLOW FILTERING")
+    fun findByPrimaryKey_MessageTimeStampBetween(
+        @Param("startTime") startTime: Instant,
+        @Param("endTime") endTime: Instant
+    ): List<ShortTermMemory>
 }

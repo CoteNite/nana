@@ -7,10 +7,18 @@ package cn.example.nana.commons.constants
  */
 object RedisKeyBuilder {
 
-    private const val PREFIX="AnotherDomain:Ai:"
+    private const val PREFIX="nana:"
 
-    fun buildRagTagListKey():String{
-        return "${PREFIX}ragTag"
+    fun buildKeyWordsKey():String{
+        return "${PREFIX}keywords"
+    }
+
+    fun buildSessionKeywordsKey(sessionId: String): String {
+        return "${PREFIX}keywords:$sessionId"
+    }
+
+    fun buildWebSearchKeywordsKey(): String {
+        return "${PREFIX}web_search_keywords"
     }
 
 }
