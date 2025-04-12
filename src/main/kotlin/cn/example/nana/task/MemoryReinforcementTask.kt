@@ -6,7 +6,7 @@ import cn.example.nana.models.cassandra.MidTermMemoryDailyKey
 import cn.example.nana.models.cassandra.ShortTermMemory
 import cn.example.nana.repo.cassandra.MidTermMemoryDailyRepository
 import cn.example.nana.repo.cassandra.ShortTermMemoryRepository
-import cn.example.nana.repo.milvus.DailyMemoryRepo
+import cn.example.nana.repo.milvus.MemoryStoreRepo
 import cn.example.nana.service.AiSummaryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,22 +26,24 @@ import java.time.temporal.ChronoUnit
  * @Date  2025/4/11 13:19
  */
 @Service
-class DailyMemoryReinforcementTask(
+class MemoryReinforcementTask(
     private val shortTermMemoryRepository: ShortTermMemoryRepository,
     private val midTermMemoryDailyRepository: MidTermMemoryDailyRepository,
     private val aiSummaryService: AiSummaryService,
-    private val dailyMemoryRepo: DailyMemoryRepo,
+    private val memoryStoreRepo: MemoryStoreRepo,
     private val embeddingModel: EmbeddingModel
 ){
 
-    private val coroutineDispatcher = Dispatchers.IO // 适用于 IO 密集型任务
+    private val coroutineDispatcher = Dispatchers.IO
+
 
     @Scheduled(cron = "0 0 2 * * ?")
     fun performDailyMemoryReinforcement() = runBlocking {
         log.info("开始执行每日记忆强化任务...")
         val now = Instant.now()
-        val yesterdayStart = now.minus(2, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS)
-        val yesterdayEnd = yesterdayStart.plus(1, ChronoUnit.DAYS)
+        // 修改为处理昨天的记录
+        val yesterdayEnd = now.truncatedTo(ChronoUnit.DAYS)
+        val yesterdayStart = yesterdayEnd.minus(1, ChronoUnit.DAYS)
 
         val sessions = shortTermMemoryRepository.findDistinctSessionIdsWithMessagesBetween(yesterdayStart, yesterdayEnd)
         val jobs = mutableListOf<kotlinx.coroutines.Deferred<Unit>>()
@@ -70,7 +72,13 @@ class DailyMemoryReinforcementTask(
                             val summary = aiSummaryService.summarizeConversation(conversationText)
                             val embedding = embeddingModel.embed(summary)
 
-                            val embeddingId = dailyMemoryRepo.storeEmbeddingInMilvus(embedding, sessionId)
+                            // 修改 storeEmbeddingInMilvus 的调用，添加 memoryAge 和 timestamp
+                            val embeddingId = memoryStoreRepo.storeEmbeddingInMilvus(
+                                embedding = embedding,
+                                sessionId = sessionId,
+                                memoryAge = "1day",
+                                timestamp = yesterdayStart.toEpochMilli()
+                            )
 
                             val midTermMemory = MidTermMemoryDaily(
                                 id = MidTermMemoryDailyKey(sessionId, yesterdayStart),
@@ -103,7 +111,23 @@ class DailyMemoryReinforcementTask(
     }
 
     private fun calculateInitialWeight(conversationHistory: List<ShortTermMemory>): Float {
-        return conversationHistory.size.toFloat() * 0.1f
+        val totalMessages = conversationHistory.size
+        val userMessages = conversationHistory.count { it.user != null }
+        val aiMessages = totalMessages - userMessages
+
+        var weight = 0f
+
+        weight += totalMessages * 0.03f
+        weight += userMessages * 0.1f
+        weight += aiMessages * 0.05f
+
+
+        conversationHistory.forEach { memory ->
+            weight += (memory.user?.length ?: 0) * 0.0008f // 用户消息长度的权重
+            weight += (memory.assistant?.length ?: 0) * 0.0004f // AI 消息长度的权重 (可以比用户低)
+        }
+
+        return weight.coerceAtLeast(0.1f)
     }
 
 

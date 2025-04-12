@@ -120,7 +120,7 @@ class CommonTools(
             val summary = result.summary // 从 Milvus 结果中获取 summary
 
             // 2. 基于 summary 在 Neo4j 知识图谱中查找相关联的内容
-            val relatedContent = neo4jQuery.findRelatedContentBySummaryUsingKeywords(summary, depth = 2) // 可以调整图的搜索深度
+            val relatedContent = neo4jQuery.findRelatedContentBySummaryUsingKeywords(summary, depth = 5) // 可以调整图的搜索深度
 
             val contextBuilder = StringBuilder()
             contextBuilder.append("找到以下相关信息：\n")
@@ -145,6 +145,8 @@ class CommonTools(
         // 3. 将增强后的信息拼接成一个字符串返回
         return enrichedResults.joinToString("\n\n")
     }
+
+
 
 
 

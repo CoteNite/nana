@@ -64,6 +64,13 @@ object TextConstants {
         - 平衡帮助性与真实的个性表达
     """.trimIndent()
 
+    const val MID_MEMORY_PROMPT="""
+        你被赋予了过去对话的总结，用于回忆之前的讨论。请记住以下几点：
+        * 这些总结是对过去一天会话的概要，可能不包含所有具体的细节。 
+        * 不要基于总结内容进行猜测或推断其中没有明确提及的信息。
+        * 如果你需要了解更多细节才能继续当前对话，你可以装作人类遗忘的样子向用户发问
+    """
+
     val IMAGE_TO_TEXT_PROMPT = """
         请分析并描述这个图片URL。
         请提供以下信息：
@@ -212,5 +219,7 @@ object TextConstants {
             ${information}
         """.trimIndent()
     }
+
+
 
 }

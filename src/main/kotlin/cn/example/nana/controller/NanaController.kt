@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("chat")
 class NanaController(
-    private val nanaService: NanaService
+    private val nanaService: NanaService,
 ){
 
     //根据设定，nana应该只有一个SessionId去进行操作

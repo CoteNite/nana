@@ -1,11 +1,6 @@
 package cn.example.nana.controller
 
-import cn.example.nana.command.KnowledgeGraphCommand
-import cn.example.nana.commons.utils.CrawlUtil
-import cn.example.nana.service.RagService
-import cn.example.nana.task.DailyMemoryReinforcementTask
-import cn.example.nana.tools.CommonTools
-import org.springframework.ai.vectorstore.milvus.MilvusVectorStore
+import cn.example.nana.task.MemoryReinforcementTask
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("test")
 class TestController(
-    private val dailyMemoryReinforcementTask: DailyMemoryReinforcementTask
+    private val memoryReinforcementTask: MemoryReinforcementTask
 ){
 
     @PostMapping("test")
     fun test(@RequestParam summary:String) {
-       dailyMemoryReinforcementTask.performDailyMemoryReinforcement()
+       memoryReinforcementTask.performDailyMemoryReinforcement()
     }
 
 }

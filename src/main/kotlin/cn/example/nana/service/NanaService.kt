@@ -4,6 +4,7 @@ import cn.example.nana.commons.constants.TextConstants
 import cn.example.nana.commons.enums.Errors
 import cn.example.nana.commons.exception.BusinessException
 import cn.example.nana.tools.CommonTools
+import cn.example.nana.tools.MemoryTools
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.memory.cassandra.CassandraChatMemory
@@ -23,7 +24,8 @@ interface NanaService{
 class NanaServiceImpl(
     private val chatModel: OpenAiChatModel,
     private val chatMemory: CassandraChatMemory,
-    private val commonTools: CommonTools
+    private val commonTools: CommonTools,
+    private val memoryTools: MemoryTools
 ): NanaService {
 
     override fun generate(sessionId:String?,message:String):String{
@@ -36,7 +38,7 @@ class NanaServiceImpl(
         val advisor = MessageChatMemoryAdvisor(chatMemory, sessionId, 10000)
         val content = ChatClient.create(chatModel)
             .prompt(TextConstants.NANA_INFORMATION)
-            .tools(commonTools)
+            .tools(commonTools,memoryTools)
             .advisors(advisor)
             .user(message)
             .call()

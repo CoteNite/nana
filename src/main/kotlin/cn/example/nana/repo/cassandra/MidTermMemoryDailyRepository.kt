@@ -2,8 +2,10 @@ package cn.example.nana.repo.cassandra
 
 import cn.example.nana.models.cassandra.MidTermMemoryDaily
 import cn.example.nana.models.cassandra.MidTermMemoryDailyKey
+import cn.example.nana.models.cassandra.ShortTermMemory
 import org.springframework.data.cassandra.repository.CassandraRepository
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 /**
  * @Author  RichardYoung
@@ -11,4 +13,7 @@ import org.springframework.stereotype.Repository
  * @Date  2025/4/11 13:11
  */
 @Repository
-interface MidTermMemoryDailyRepository : CassandraRepository<MidTermMemoryDaily, MidTermMemoryDailyKey>
+interface MidTermMemoryDailyRepository : CassandraRepository<MidTermMemoryDaily, MidTermMemoryDailyKey>{
+
+    fun findById_SessionIdAndId_SummaryTimestampBetween(sessionId: String, startTime: Instant, endTime: Instant): List<MidTermMemoryDaily>
+}

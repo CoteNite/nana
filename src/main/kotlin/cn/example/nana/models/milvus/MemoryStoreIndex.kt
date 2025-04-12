@@ -5,12 +5,15 @@ package cn.example.nana.models.milvus
  * @Description
  * @Date  2025/4/11 14:21
  */
-object MidTermMemoryIndex {
+object MemoryStoreIndex {
 
-    const val TABLE_NAME = "mid_term_memory_daily_embeddings"
+    const val TABLE_NAME = "memory_store"
 
     const val SESSION_ID="session_id"
 
+    const val MEMORY_AGE="memory_age"
+
     const val EMBEDDING="embedding"
 
+    const val TIMESTAMP = "timestamp"
 }
