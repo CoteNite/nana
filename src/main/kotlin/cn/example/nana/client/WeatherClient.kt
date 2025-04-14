@@ -12,6 +12,13 @@ import org.springframework.stereotype.Service
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.security.KeyFactory
+import java.security.Signature
+import java.security.spec.PKCS8EncodedKeySpec
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.util.*
 
 /**
  * @Author  RichardYoung
@@ -24,7 +31,11 @@ class WeatherClient(
     @Value("\${weather.base-url}")
     private var baseUrl: String,
     @Value("\${weather.sk}")
-    private var apiToken: String,
+    private var sk: String,
+    @Value("\${weather.sub}")
+    private var sub: String,
+    @Value("\${weather.kid}")
+    private var kid: String,
     @Value("\${weather.location}")
     private var location: String
 ) {
@@ -59,7 +70,7 @@ class WeatherClient(
         }
 
         return try {
-            val call = weatherApi.getCurrentWeather(location, lang, unit, "Bearer $apiToken")
+            val call = weatherApi.getCurrentWeather(location, lang, unit, "Bearer ${this.createJwtKey()}")
             val response = call.execute()
 
             if (!response.isSuccessful) {
@@ -74,5 +85,41 @@ class WeatherClient(
             log.error("获取天气信息时发生未知错误: ${e.message}")
             null
         }
+    }
+
+
+    private fun createJwtKey():String{
+        var privateKeyString = this.sk
+        privateKeyString =
+            privateKeyString.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "")
+                .trim { it <= ' ' }
+        val privateKeyBytes = Base64.getDecoder().decode(privateKeyString)
+        val keySpec = PKCS8EncodedKeySpec(privateKeyBytes)
+        val keyFactory = KeyFactory.getInstance("EdDSA")
+        val privateKey = keyFactory.generatePrivate(keySpec)
+
+
+        val headerJson = "{\"alg\": \"EdDSA\", \"kid\": \"$kid\"}"
+
+
+        val iat = ZonedDateTime.now(ZoneOffset.UTC).toEpochSecond() - 30
+        val exp = iat + 900
+        val payloadJson = "{\"sub\": \"$sub\", \"iat\": $iat, \"exp\": $exp}"
+
+        val headerEncoded = Base64.getUrlEncoder().encodeToString(headerJson.toByteArray(StandardCharsets.UTF_8))
+        val payloadEncoded = Base64.getUrlEncoder().encodeToString(payloadJson.toByteArray(StandardCharsets.UTF_8))
+        val data = "$headerEncoded.$payloadEncoded"
+
+
+        val signer = Signature.getInstance("EdDSA")
+        signer.initSign(privateKey)
+        signer.update(data.toByteArray(StandardCharsets.UTF_8))
+        val signature = signer.sign()
+
+        val signatureString = Base64.getUrlEncoder().encodeToString(signature)
+
+        val jwt = "$data.$signatureString"
+
+        return jwt
     }
 }

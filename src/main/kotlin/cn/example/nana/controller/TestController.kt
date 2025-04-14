@@ -27,20 +27,20 @@ class TestController(
     private val openAiChatModel: OpenAiChatModel
 ){
 
-//    @PostMapping("test")
-//    fun test() {
-//
-//        val tweet = tweetService.generateTweet()
-//
-//        println(tweet)
-//
-//        println(
-//            ChatClient.create(openAiChatModel)
-//                .prompt(TextConstants.generateImageGenerationPrompt(tweet))
-//                .call().content()
-//        )
-//
-//    }
+    @PostMapping("test")
+    fun test() {
+
+        val tweet = tweetService.generateTweet()
+
+        println(tweet)
+
+        println(
+            ChatClient.create(openAiChatModel)
+                .prompt(TextConstants.generateImageGenerationPrompt(tweet))
+                .call().content()
+        )
+
+    }
 
 
 }

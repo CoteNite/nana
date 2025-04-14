@@ -61,6 +61,8 @@ searxng:
 weather:
   base-url: ${weather.base-url}
   sk: ${weather.sk}
+  kid: ${weather.kid}
+  sub: ${weather.sub}
   location: 101180901
 
 
