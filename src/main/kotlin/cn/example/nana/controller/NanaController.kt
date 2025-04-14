@@ -19,7 +19,6 @@ class NanaController(
     private val nanaService: NanaService,
 ){
 
-    //根据设定，nana应该只有一个SessionId去进行操作
     @PostMapping("/generate")
     fun generate(@RequestParam message:String):Response{
         val content = nanaService.generate(null,message)
@@ -29,6 +28,9 @@ class NanaController(
     @PostMapping("/testGenerate")
     fun testGenerate(@RequestParam message:String,sessionId:String?):Response{
         val content = nanaService.generate(sessionId,message)
+
+
+
         return Response.success(content)
     }
 

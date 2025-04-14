@@ -58,6 +58,11 @@ spring:
 searxng:
   base-url: http://localhost:8041
 
+weather:
+  base-url: ${weather.base-url}
+  sk: ${weather.sk}
+  location: 101180901
+
 
 logging:
   level:

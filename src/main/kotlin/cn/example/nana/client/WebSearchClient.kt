@@ -2,19 +2,17 @@ package cn.example.nana.client
 
 import cn.example.nana.client.api.SearXNGApi
 import cn.example.nana.client.api.dto.SearchResult
-import cn.example.nana.client.api.dto.SearxngResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
-import java.util.concurrent.CompletableFuture
 
 /**
  * @Author  RichardYoung
