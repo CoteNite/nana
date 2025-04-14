@@ -13,7 +13,7 @@ object WebSearchIndex {
 
     const val CONTENT_VECTOR ="content_vector"
 
-    const val CREATE_AT ="create_at"
+    const val CREATED_AT ="created_at"
 
 
 }

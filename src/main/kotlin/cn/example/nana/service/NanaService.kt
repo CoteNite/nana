@@ -8,6 +8,7 @@ import cn.example.nana.tools.MemoryTools
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.memory.cassandra.CassandraChatMemory
+import org.springframework.ai.moonshot.MoonshotChatModel
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.stereotype.Service
 

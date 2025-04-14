@@ -45,7 +45,7 @@ class StoreWebSearchRepo(
                 .build()
 
             val createdAtField = InsertParam.Field.builder()
-                .name(WebSearchIndex.CREATE_AT)
+                .name(WebSearchIndex.CREATED_AT)
                 .values(createdAtList)
                 .build()
 
@@ -53,6 +53,7 @@ class StoreWebSearchRepo(
                 .withCollectionName(WebSearchIndex.TABLE_NAME)
                 .withFields(listOf( summaryField, vectorField, createdAtField))
                 .build()
+
 
             try {
                 milvusClient.insert(insertParam)

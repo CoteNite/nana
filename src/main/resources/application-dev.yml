@@ -29,6 +29,11 @@ spring:
           model: lrs33/bce-embedding-base_v1:latest
           num-batch: 512
           num-ctx: 512
+    moonshot:
+      api-key: ${api.mn.sk}
+      chat:
+        options:
+          model: kimi-latest
     vectorstore:
       milvus:
         client:

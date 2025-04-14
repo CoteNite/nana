@@ -31,8 +31,7 @@ class KnowledgeGraphCommand(
     private val keywordRepository: KeywordRepository,
     private val contentRepository: ContentRepository,
     private val openAiChatModel: OpenAiChatModel,
-    private val redissonClient: RedissonClient,
-    // private val neo4jTemplate: Neo4jTemplate // 移除 Neo4jTemplate 的注入
+    private val redissonClient: RedissonClient
 ) {
 
     private val objectMapper = jacksonObjectMapper()
@@ -47,7 +46,7 @@ class KnowledgeGraphCommand(
         log.info("从 Redis 获取的网络搜索历史关键词: $historicalKeywords")
 
         var jsonString = ChatClient.create(openAiChatModel)
-            .prompt(TextConstants.buildKeywordRefinementPrompt(summary, historicalKeywords.joinToString(","))) // 这里不需要历史关键词
+            .prompt(TextConstants.buildKnowledgeGraphPrompt(summary, historicalKeywords)) // 这里不需要历史关键词
             .call()
             .content() ?: throw BusinessException(Errors.CHAT_ERROR)
 
